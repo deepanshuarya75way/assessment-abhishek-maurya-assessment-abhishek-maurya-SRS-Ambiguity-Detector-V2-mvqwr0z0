@@ -1,0 +1,37 @@
+[project]
+name = "srs-ambiguity-detector"
+version = "0.1.0"
+description = "SRS Ambiguity Detector — FastAPI backend"
+requires-python = ">=3.11"
+# NOTE: pip installs from requirements*.txt; this file owns TOOL configuration.
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "S"]
+ignore = [
+  "S101", # assert allowed in tests and internal invariants
+]
+flake8-bandit = { check-typed-exception = false }
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = ["S101"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+show_error_codes = true
+warn_unreachable = true
+# Third-party libs without precise hints in strict mode:
+[[tool.mypy.overrides]]
+module = "uvicorn.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

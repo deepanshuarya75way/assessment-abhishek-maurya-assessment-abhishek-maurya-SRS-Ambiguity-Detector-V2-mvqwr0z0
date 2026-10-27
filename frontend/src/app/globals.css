@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* Shared palette for the light interface. Keep control surfaces white and text dark
+   so operating-system dark mode cannot create low-contrast form fields. */
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --color-paper: #f5f8ff;
+  --color-paper-deep: #eaf0fb;
+  --color-ink: #172033;
+  --color-ink-soft: #3e4b63;
+  --color-ink-faint: #59677d;
+  --color-line: #d6deec;
+
+  --color-signal: #4f46e5;
+  --color-signal-deep: #3730a3;
+  --color-signal-mist: #e9eaff;
+
+  --color-gold: #b45309;
+  --color-gold-mist: #fff1db;
+
+  /* Severity semantics — consistent across scores, chips, charts (UI_UX_SPEC §7). */
+  --color-sev-low: #64748b;
+  --color-sev-medium: #a16207;
+  --color-sev-high: #c2410c;
+  --color-sev-critical: #b4232a;
+
+  --color-critic: #b4232a;
+
+  --radius-card: 10px;
+  --radius-input: 8px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+input,
+textarea,
+select {
+  color: var(--color-ink);
+  color-scheme: light;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-ink-faint);
+  opacity: 1;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: #fff;
+}
+
+@layer components {
+  /* Primary action (Stage 13: referenced by the shared SubmitButton since
+     Stage 05 but never defined — auth submits and settings dialogs inherit
+     the same signal pill from here). */
+  .btn-primary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    background: var(--color-signal);
+    padding: 0.625rem 1.25rem;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    transition:
+      background 120ms var(--ease-out-expo),
+      opacity 120ms var(--ease-out-expo);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-signal-deep);
+  }
+  .btn-primary:disabled {
+    opacity: 0.6;
+  }
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Global reduced-motion guard (UI_UX_SPEC §6). Motion components additionally
+   respect user preference via <MotionConfig reducedMotion="user">. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

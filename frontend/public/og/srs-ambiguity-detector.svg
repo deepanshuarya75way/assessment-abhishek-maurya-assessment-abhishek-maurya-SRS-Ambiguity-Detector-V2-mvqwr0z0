@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">SRS Ambiguity Detector</title>
+  <desc id="desc">Product preview card for requirements ambiguity analysis.</desc>
+  <rect width="1200" height="630" fill="#FAF8F4"/>
+  <circle cx="1080" cy="94" r="180" fill="#0E6B4F" opacity="0.12"/>
+  <circle cx="118" cy="542" r="190" fill="#B8892D" opacity="0.14"/>
+  <rect x="96" y="86" width="1008" height="458" rx="44" fill="#FFFFFF" stroke="#E7DED1" stroke-width="2"/>
+  <rect x="146" y="136" width="104" height="104" rx="28" fill="#16140F"/>
+  <text x="198" y="207" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="68" fill="#FAF8F4">§</text>
+  <circle cx="228" cy="158" r="12" fill="#0E6B4F"/>
+  <text x="286" y="168" font-family="Inter, Arial, sans-serif" font-size="29" font-weight="700" fill="#16140F" letter-spacing="3">SRS AMBIGUITY DETECTOR</text>
+  <text x="146" y="320" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="750" fill="#16140F">Find ambiguous requirements</text>
+  <text x="146" y="384" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="750" fill="#16140F">before they become rework.</text>
+  <text x="146" y="454" font-family="Inter, Arial, sans-serif" font-size="28" fill="#5F574C">Deterministic SRS checks, traceable findings, private reports.</text>
+  <g transform="translate(730 424)">
+    <rect width="304" height="68" rx="34" fill="#0E6B4F"/>
+    <text x="152" y="44" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF">Analyze requirements</text>
+  </g>
+</svg>

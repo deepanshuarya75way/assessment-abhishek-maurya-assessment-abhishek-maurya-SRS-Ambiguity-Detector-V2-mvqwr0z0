@@ -1,0 +1,27 @@
+# Runtime dependencies (pinned). Regenerate pins deliberately, never by accident.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+httpx==0.28.1
+# Stage 02: async PostgreSQL stack (SQLAlchemy 2.0 + asyncpg) + Alembic migrations.
+# greenlet: required by SQLAlchemy asyncio; Mako: required by `alembic revision`.
+SQLAlchemy==2.0.54
+asyncpg==0.31.0
+alembic==1.20.0
+greenlet==3.5.6
+Mako==1.4.3
+# Stage 04: authentication (argon2id password hashing + HS256 session JWTs).
+argon2-cffi==25.1.0
+PyJWT==2.15.0
+# Pydantic EmailStr validation (DNS checks off; format-only at the boundary).
+email-validator==2.2.0
+# Stage 08: secure document upload + extraction (multipart parsing, PDF/DOCX/TXT).
+python-multipart==0.0.32
+pypdf==6.19.0
+python-docx==1.2.0
+lxml==6.1.3  # required by python-docx
+# Stage 12: AI credential vault (Fernet envelope for per-user provider keys).
+cryptography==50.0.1
+# Stage 24: production error tracking (initialized only when SENTRY_DSN is set).
+sentry-sdk[fastapi]==2.70.0

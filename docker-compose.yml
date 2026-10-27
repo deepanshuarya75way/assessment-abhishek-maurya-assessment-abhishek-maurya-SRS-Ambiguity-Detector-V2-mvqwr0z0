@@ -1,0 +1,29 @@
+# Local development services.
+# Usage:  docker compose up -d db        (Postgres only; apps run on the host)
+# Stage 01: the backend skeleton runs WITHOUT a database; this file exists so
+# Stage 02+ has a canonical local Postgres. Supabase Postgres is the managed
+# target for staging/production (see the project contract).
+
+name: srs-ambiguity-detector
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: srs-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-srs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme-local-only}
+      POSTGRES_DB: ${POSTGRES_DB:-srs_ambiguity}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-srs} -d ${POSTGRES_DB:-srs_ambiguity}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
