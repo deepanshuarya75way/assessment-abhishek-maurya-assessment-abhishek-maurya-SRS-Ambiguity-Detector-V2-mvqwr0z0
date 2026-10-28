@@ -10,6 +10,7 @@
  */
 
 import type {
+  SegmentedRequirement,
   AiRetryResult,
   AnalysisResult,
   AnalysisSummary,
@@ -71,4 +72,15 @@ export async function listAnalyses(
 /** Delete one owned analysis (requirements + issues cascade). 204 → void. */
 export async function deleteAnalysis(id: string): Promise<void> {
   return withSessionRetry(() => api<void>(`/analysis/${id}`, { method: "DELETE" }));
+}
+
+export async function listRequirements(
+  id: string,
+  p: { q: string; status: string; severity: string; sort: string; page: number; page_size: number},
+): Promise<Collection<SegmentedRequirement>> {
+  const query = new URLSearchParams();
+  Object.entries(p).forEach(([k,v]) => query.set(k, String(v)));
+  return withSessionRetry(() =>
+  api<Collection<SegmentedRequirement>>(`/analysis/${id}/requirements?${query}`),
+);
 }

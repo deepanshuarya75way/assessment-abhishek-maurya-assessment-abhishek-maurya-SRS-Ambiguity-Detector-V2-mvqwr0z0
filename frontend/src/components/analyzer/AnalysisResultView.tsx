@@ -13,8 +13,8 @@
  * report never does). Everything rendered is the persisted backend record —
  * no recalculation.
  */
-
-import { useMemo, useState } from "react";
+import { listRequirements} from "@/lib/analysis";
+import { useEffect, useMemo, useState } from "react";
 import { CircleCheck, Info, Search, TriangleAlert } from "lucide-react";
 
 import type { AnalysisResult, RequirementSeverity } from "@/types/analysis";
@@ -91,12 +91,22 @@ export function AnalysisResultView({
   const metaVerb = context === "fresh" ? "Analyzed" : "Saved";
 
   const categories = useMemo(() => countByCategory(result.requirements), [result.requirements]);
-  const visible = useMemo(
-    () => sortRequirements(filterRequirements(result.requirements, filters), sort),
-    [result.requirements, filters, sort],
-  );
+
   const allExpanded =
-    visible.length > 0 && visible.every((requirement) => expandedIds.has(requirement.id));
+  result.requirements.length > 0 &&
+  result.requirements.every((id) => expandedIds.has("id"));
+    type SavedView = { name: string; filters: ReportFilterState; sort: SortMode; pageSize: number};
+
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
+    const [visible, setVisible] = useState(result.requirements);
+    const [total, setTotal] = useState(result.requirements.length);
+    const [ready, setReady] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [loadError, setLoadError] = useState(false);
+    const [views, setViews] = useState<SavedView[]>([]);
+    const [viewName, setViewName] = useState("");
+    const [selectedView, setSelectedView] = useState("");
   // Stage 15: persisted rewrite coverage for the AI block's partial-honesty
   // note — derived from the record (flagged vs rewritten counts), never
   // invented. Only meaningful on `ok` runs; every other state passes null.
@@ -293,9 +303,10 @@ export function AnalysisResultView({
                   id="report-search"
                   type="search"
                   value={filters.query}
-                  onChange={(event) =>
-                    setFilters((previous) => ({ ...previous, query: event.target.value }))
-                  }
+                  onChange={event => {
+                    setFilters(f => ({ ...f, query: event.target.value }));
+                    setPage(1);
+                  }}
                   placeholder="Search text or ID…"
                   className="w-full rounded-lg border border-line bg-white py-2 pr-3 pl-9 text-sm text-ink outline-none transition placeholder:text-ink-faint focus-visible:ring-2 focus-visible:ring-signal/50"
                 />
@@ -309,12 +320,14 @@ export function AnalysisResultView({
                 <select
                   id="report-filter-status"
                   value={filters.status}
-                  onChange={(event) =>
+                  onChange={event=> {
                     setFilters((previous) => ({
                       ...previous,
                       status: event.target.value as ReportFilterState["status"],
-                    }))
-                  }
+                    }));
+                                          setPage(1);
+
+                  }}
                   className={`${selectClassName} mt-1.5`}
                 >
                   <option value="all">All</option>
@@ -329,12 +342,14 @@ export function AnalysisResultView({
                 <select
                   id="report-filter-severity"
                   value={filters.severity}
-                  onChange={(event) =>
+                  onChange={(event) =>{
                     setFilters((previous) => ({
                       ...previous,
                       severity: event.target.value as ReportFilterState["severity"],
-                    }))
-                  }
+  
+                    }));
+                                        setPage(1);
+                  }}
                   className={`${selectClassName} mt-1.5`}
                 >
                   <option value="all">All</option>
@@ -351,7 +366,9 @@ export function AnalysisResultView({
                 <select
                   id="report-sort"
                   value={sort}
-                  onChange={(event) => setSort(event.target.value as SortMode)}
+                  onChange={(event) => {setSort(event.target.value as SortMode);
+                    setPage(1)
+                  }}
                   className={`${selectClassName} mt-1.5`}
                 >
                   {SORT_OPTIONS.map((option) => (
@@ -378,10 +395,13 @@ export function AnalysisResultView({
             </button>
           </div>
         </div>
-      ) : null}
-
-      {visible.length > 0 ? (
-        <ol className="mt-6 space-y-3">
+               ) : null}
+      {loading ? (
+        <p>Loading requirements...</p>
+      ) : loadError ? (
+        <p role="alert">Failed to load Requirements.</p>
+      )  : visible.length > 0 ? (
+          <ol className="mt-6 space-y-3">
           {visible.map((requirement, index) => (
             <RequirementCard
               key={requirement.id}
@@ -393,20 +413,19 @@ export function AnalysisResultView({
           ))}
         </ol>
       ) : (
-        <div className="mt-6 rounded-card border border-dashed border-line bg-paper p-6 text-center">
-          <h3 className="text-[15px] font-semibold">No requirements match</h3>
-          <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-            Try clearing the search or resetting the filters.
-          </p>
+        <div className="mt-6 rounded-card border border-dashed border-line p-6 text-center">
+          <h3 className="font-semibold">No requirements match</h3>
+          <p>Try clearing the search or resetting the filters.</p>
+          
           <button
             type="button"
             onClick={resetFilters}
-            className="mt-4 inline-flex items-center justify-center rounded-full border border-line px-5 py-2 text-sm font-medium text-ink-soft transition outline-none hover:bg-paper-deep focus-visible:ring-2 focus-visible:ring-signal/50"
           >
             Reset filters
           </button>
         </div>
       )}
+
 
       {actions ? <div className="mt-6 flex flex-wrap gap-3">{actions}</div> : null}
     </section>
